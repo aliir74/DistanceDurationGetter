@@ -1,17 +1,19 @@
 import googlemaps
 import csv
 
-def writeResultToCSV(file, result):
+def writeResultToCSV(file, result1, result2):
     csvwriter = csv.writer(file)
 
     #write headers
-    header = ['origins/destinations']+result['destination_addresses']
+    header = ['origins/destinations']
+    for idx, i in enumerate(result1['destination_addresses']+result2['destination_addresses']):
+        header.append(idx+1)
     csvwriter.writerow(header)
 
     #add content
-    for (idx, i) in enumerate(result['origin_addresses']):
-        row = [i]
-        for j in result['rows'][idx]['elements']:
+    for (idx, i) in enumerate(result1['origin_addresses']):
+        row = [idx+1]
+        for j in (result1['rows'][idx]['elements']+result2['rows'][idx]['elements']):
             row.append(j['duration']['text'])
 
         csvwriter.writerow(row)
@@ -20,38 +22,16 @@ def writeResultToCSV(file, result):
 def getDataFromFile(file):
     origins = []
     dests = []
-    '''
-    oo = False
-    od = False
-    for line in file:
-        if("origin" in line):
-            oo = True
-            od = False
-        elif("destination" in line):
-            od = True
-            oo = False
-        else:
-            if(od):
-                location = [(i) for i in line.split()]
-                #print(location)
-                dests.append((float(location[1]), float(location[2])))
-            elif(oo):
-                location = [(i) for i in line.split()]
-                #print(location)
-                origins.append((float(location[1]), float(location[2])))
-    '''
     cnt = 0
     for idx, line in enumerate(file):
         if(line == "\n"):
             continue
         if(cnt < 36):
             location = [(i) for i in line.split()]
-            #print(location[1][:-1])
             dests.append((float(location[1][:-1]), float(location[2])))
             cnt += 1
         elif(cnt < 40):
             location = [(i) for i in line.split()]
-            #print(location[1][:-1])
             origins.append((float(location[1][:-1]), float(location[2])))
             cnt += 1
     return origins, dests
@@ -71,7 +51,8 @@ for i in origins:
 print('dests:')
 for i in dests:
     print(i)
-ret = gmaps.distance_matrix(origins[:], dests[:])
 
 resultCSV = open('result.csv', 'w')
-writeResultToCSV(resultCSV, ret)
+ret1 = gmaps.distance_matrix(origins, dests[:25])
+ret2 = gmaps.distance_matrix(origins, dests[25:])
+writeResultToCSV(resultCSV, ret1, ret2)
