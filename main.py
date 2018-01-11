@@ -20,6 +20,7 @@ def writeResultToCSV(file, result):
 def getDataFromFile(file):
     origins = []
     dests = []
+    '''
     oo = False
     od = False
     for line in file:
@@ -38,6 +39,21 @@ def getDataFromFile(file):
                 location = [(i) for i in line.split()]
                 #print(location)
                 origins.append((float(location[1]), float(location[2])))
+    '''
+    cnt = 0
+    for idx, line in enumerate(file):
+        if(line == "\n"):
+            continue
+        if(cnt < 36):
+            location = [(i) for i in line.split()]
+            #print(location[1][:-1])
+            dests.append((float(location[1][:-1]), float(location[2])))
+            cnt += 1
+        elif(cnt < 40):
+            location = [(i) for i in line.split()]
+            #print(location[1][:-1])
+            origins.append((float(location[1][:-1]), float(location[2])))
+            cnt += 1
     return origins, dests
 
 
@@ -45,7 +61,7 @@ apikey = open('key.txt', 'r').readline()
 
 gmaps = googlemaps.Client(key=apikey)
 
-locations = open('URL.txt', 'r')
+locations = open('URL1.txt', 'r')
 origins, dests = getDataFromFile(locations)
 
 print('origins:')
@@ -55,10 +71,7 @@ for i in origins:
 print('dests:')
 for i in dests:
     print(i)
-ret = gmaps.distance_matrix(origins[:20], dests[:3])
+ret = gmaps.distance_matrix(origins[:], dests[:])
 
 resultCSV = open('result.csv', 'w')
 writeResultToCSV(resultCSV, ret)
-#print(ret['rows'][0]['elements'][0]['duration'])
-
-#print(ret)
