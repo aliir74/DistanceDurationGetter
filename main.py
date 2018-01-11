@@ -14,7 +14,7 @@ def writeResultToCSV(file, result1, result2):
     for (idx, i) in enumerate(result1['origin_addresses']):
         row = [idx+1]
         for j in (result1['rows'][idx]['elements']+result2['rows'][idx]['elements']):
-            row.append(j['duration']['text'])
+            row.append(j['duration']['value'])
 
         csvwriter.writerow(row)
 
@@ -41,7 +41,7 @@ apikey = open('key.txt', 'r').readline()
 
 gmaps = googlemaps.Client(key=apikey)
 
-locations = open('URL1.txt', 'r')
+locations = open('URL.txt', 'r')
 origins, dests = getDataFromFile(locations)
 
 print('origins:')
