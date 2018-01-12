@@ -41,7 +41,7 @@ apikey = open('key.txt', 'r').readline()
 
 gmaps = googlemaps.Client(key=apikey)
 
-locations = open('URL.txt', 'r')
+locations = open('Input.txt', 'r')
 origins, dests = getDataFromFile(locations)
 
 print('origins:')
